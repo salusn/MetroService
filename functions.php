@@ -124,71 +124,6 @@ require('config.php');
   }
 
   //artist video clips by film id
-  // function getArtistClipsByFilmID($page,$itemsPerPage) {
-  //     $offset = ($page - 1) * $itemsPerPage;
-  //     $select = mysql_query("SELECT FILM_Id,ATCLIP_UTube_Path,ATCLIP_Image,ATCLIP_Type,ATCLIP_Descr,ATCLIP_Title from  bb_artist_clips c where FILM_Id > 0 order by FILM_Id limit $offset,$itemsPerPage ;");
-  //     $rows = array();
-  //     $gallery = array();
-  //     $film_ids = array();
-
-  //     while($row = mysql_fetch_object($select))
-  //       {
-  //         $row_data = new stdClass();
-
-  //         if($row->ATCLIP_Type == 'Interviews'){
-  //           $field_media_type = 86;
-  //         }
-  //         if($row->ATCLIP_Type == 'Songs'){
-  //           $field_media_type = 87;
-  //         }
-  //         if($row->ATCLIP_Type == 'Scene'){
-  //           $field_media_type = 5;
-  //         }
-  //         if($row->ATCLIP_Type == 'Full Length Movie'){
-  //           $field_media_type = 90;
-  //         }
-  //         if($row->ATCLIP_Type == 'TrailersPromos'){
-  //           $field_media_type = 4;
-  //         }
-  //         if($row->ATCLIP_Type == 'Short Film'){
-  //           $field_media_type = 91;
-  //         }
-  //         if($row->ATCLIP_Type == 'General'){
-  //           $field_media_type = 89;
-  //         }
-  //         if($row->ATCLIP_Type == 'News'){
-  //           $field_media_type = 88;
-  //         }
-
-  //         $row_data->title = $row->ATCLIP_Title;
-  //         $row_data->field_film = $row->FILM_Id;
-  //         $row_data->field_media_category = "Video";
-  //         $row_data->field_media = "Artist";
-  //         $row_data->field_latest = "No";
-  //         $row_data->field_media_type  = $field_media_type;
-  //         $row_data->field_media_description = $row->ATCLIP_Descr;
-  //         $row_data->field_video_youtube_path = get_youtube_url($row->ATCLIP_UTube_Path);
-  //         //$row_data->field_video_youtube_path = $row->ATCLIP_UTube_Path;
-
-  //         $film_ids[$row->FILM_Id] = $row->FILM_Id;
-  //         $rows[] = $row_data;
-  //       }
-
-  //       $film_ids = array_keys($film_ids);
-  //       $url = 'http://192.168.27.100/metromatinee/?q=importfilmid';
-  //       $result = service_call($url,$film_ids);
-  //       //print_r($result);
-
-  //       $new_rows = array();
-  //       foreach ($rows as $key => $value) {
-  //         $value->field_film = $result[$value->field_film];
-  //         $new_rows[] = $value;
-  //       }
-
-  //     return array("results" => $new_rows);
-  //   }
-
-    //artist video clips by film id
   function getArtistClipsByFilmID($page,$itemsPerPage) {
       $offset = ($page - 1) * $itemsPerPage;
       $select = mysql_query("SELECT FILM_Id,ATCLIP_UTube_Path,ATCLIP_Image,ATCLIP_Type,ATCLIP_Descr,ATCLIP_Title from  bb_artist_clips c where FILM_Id > 0 order by FILM_Id limit $offset,$itemsPerPage ;");
@@ -252,8 +187,7 @@ require('config.php');
 
       return array("results" => $new_rows);
     }
-
-
+  
 //artist film clips by artist id
 function getArtistClipsByArtistID($page,$itemsPerPage) {
     $offset = ($page - 1) * $itemsPerPage;

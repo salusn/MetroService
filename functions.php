@@ -63,7 +63,7 @@ require('config.php');
        $row_data->field_date_of_death = $row->ASTM_Date_Of_Death;
      }
      $row_data->field_description = $row->ASTM_Description;
-     $img_url = "http://www.metromatinee.com/gallery/a$row_data->id/thumb/";
+     $img_url = "http://old.metromatinee.com/gallery/a$row_data->id/thumb/";
      $profile_images = getArtistProfileImage($row_data->id);
      if($profile_images[0]->PAM_Images == ''){
        $row_data->field_profile_image = '';
@@ -98,7 +98,7 @@ require('config.php');
 
       while($row = mysql_fetch_object($select))
     	  {
-        $img_url = "http://www.metromatinee.com/gallery/a$row->ASTM_Id/large/";
+        $img_url = "http://old.metromatinee.com/gallery/a$row->ASTM_Id/large/";
           if((@fopen($img_url.$row->ATIM_Image,"r")==true)){
             $gallery[$row->ASTM_Id][] = array('url' => $img_url.$row->ATIM_Image,'date' => strtotime($row->ATIM_Add_Date));            
             $artist_ids[$row->ASTM_Id] = $row->ASTM_Id;
@@ -288,7 +288,7 @@ function getArtistClipsByArtistID($page,$itemsPerPage) {
         else{
           $row_data->field_released = $row->FILM_Released;
         }
-        $img_url = "http://www.metromatinee.com/movies/images/m$row_data->field_film_id_/large/";
+        $img_url = "http://old.metromatinee.com/movies/images/m$row_data->field_film_id_/large/";
         $film_profile_image = getFilmProfileImage($row_data->field_film_id_);
         if(isset($film_profile_image[0]) && $film_profile_image[0]->PFL_Images !=''){
         $row_data->field_profile_image = $img_url.$film_profile_image[0]->PFL_Images;
@@ -608,7 +608,7 @@ function getArtistClipsByArtistID($page,$itemsPerPage) {
 
     while($row = mysql_fetch_object($select))
     	{
-      $img_url = "http://www.metromatinee.com/movies/images/m$row->FILM_Id/large/";
+      $img_url = "http://old.metromatinee.com/movies/images/m$row->FILM_Id/large/";
       // if($row->FLM_Image == ''){
       //   $row_data->field_media_image == '';
       // }else{
@@ -847,12 +847,13 @@ function getArtistClipsByArtistID($page,$itemsPerPage) {
          $row_data->title = preg_replace('/[^a-zA-Z0-9_ %\[\]\.\(\)%&-]/s', '',$row->NEWS_Title);
          $row_data->field_description = preg_replace('/[^a-zA-Z0-9_ %\[\]\.\(\)%&-]/s', '',$row->NEWS_Description);
          $row_data->created = strtotime($row->NEWS_Date);         
-         $img_url = "http://www.metromatinee.com/MetromatineMoviewNews/images/";
-         if($row->NEWS_Image == ''){
+         //$img_url = "http://www.metromatinee.com/MetromatineMoviewNews/images/";
+         //if($row->NEWS_Image == ''){
          $row_data->field_image = '';
-         }else{
-         $row_data->field_image = $img_url.$row->NEWS_Image;
-         }
+         //}
+         //else{
+         //$row_data->field_image = $img_url.$row->NEWS_Image;
+         //}
 
         $taxonomy_ids = array('1' => 70,
                               '2' => 71,

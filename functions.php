@@ -105,7 +105,7 @@ require('config.php');
           }
     	  }
         $artist_ids = array_keys($artist_ids);
-        $url = 'http://192.168.27.100/metromatinee/?q=importnid';
+        $url = 'http://www.metromatinee.com/?q=importnid';
         $result = service_call($url,$artist_ids);
 //print_r($result);
        foreach ($gallery as $key => $value) {               
@@ -175,7 +175,7 @@ require('config.php');
         }
 
         $film_ids = array_keys($film_ids);
-        $url = 'http://192.168.27.100/metromatinee/?q=importfilmid';
+        $url = 'http://www.metromatinee.com/?q=importfilmid';
         $result = service_call($url,$film_ids);
         //print_r($result);
 
@@ -240,7 +240,7 @@ function getArtistClipsByArtistID($page,$itemsPerPage) {
       }
 
       $artist_ids = array_keys($artist_ids);
-      $url = 'http://192.168.27.100/metromatinee/?q=importnid';
+      $url = 'http://www.metromatinee.com/?q=importnid';
       $result = service_call($url,$artist_ids);
 
       $new_rows = array();
@@ -483,7 +483,7 @@ function getArtistClipsByArtistID($page,$itemsPerPage) {
 
   $artist_ids = array_keys($artist_ids);
 
-  $url = 'http://192.168.27.100/metromatinee/?q=importnid';
+  $url = 'http://www.metromatinee.com/?q=importnid';
   $result = service_call($url,$artist_ids);
 //print_r($result);
      $new_rows = array();
@@ -622,7 +622,7 @@ function getArtistClipsByArtistID($page,$itemsPerPage) {
     	}
 
       $film_ids = array_keys($film_ids);
-      $url = 'http://192.168.27.100/metromatinee/?q=importfilmid';
+      $url = 'http://www.metromatinee.com/?q=importfilmid';
       $result = service_call($url,$film_ids);
 //print_r($result);
      foreach ($gallery as $key => $value) {
@@ -672,7 +672,7 @@ function getArtistClipsByArtistID($page,$itemsPerPage) {
       }
 
       $film_ids = array_keys($film_ids);
-      $url = 'http://192.168.27.100/metromatinee/?q=importfilmid';
+      $url = 'http://www.metromatinee.com/?q=importfilmid';
       $result = service_call($url,$film_ids);
 //print_r($result);
       foreach ($rows as $key => $value) {
@@ -1047,7 +1047,7 @@ function getArtistClipsByArtistID($page,$itemsPerPage) {
      }
 
      $artist_ids = array_keys($artist_ids);
-     $url = 'http://192.168.27.100/metromatinee/?q=importnid';
+     $url = 'http://www.metromatinee.com/?q=importnid';
      $result = service_call($url,$artist_ids);
 
      $new_rows = array();
@@ -1206,7 +1206,7 @@ function getArtistClipsByArtistID($page,$itemsPerPage) {
          	}
 
           $film_ids = array_keys($film_ids);
-          $url = 'http://192.168.27.100/metromatinee/?q=importfilmid';
+          $url = 'http://www.metromatinee.com/?q=importfilmid';
           $result = service_call($url,$film_ids);
           $new_rows = array();
           foreach ($rows as $key => $value) {
@@ -1248,7 +1248,7 @@ function getMovieReviews($page,$itemsPerPage){
 
    }
    $film_ids = array_keys($film_ids);
-   $url = 'http://192.168.27.100/metromatinee/?q=importfilmid';
+   $url = 'http://www.metromatinee.com/?q=importfilmid';
    $result = service_call($url,$film_ids);
    //print_r($result);
    $new_rows = array();

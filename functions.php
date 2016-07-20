@@ -1234,7 +1234,7 @@ function getMovieReviews($page,$itemsPerPage){
       //$row_data->film_id = $row->MVR_Film_Id;
       $row_data->mvr_critics_order = $row->MVR_Critix_Order;
       $row_data->mvr_date = $row->MVR_Date;
-      $img_url = "http://www.metromatinee.com/malayalam_movie_reviews/images/";
+      $img_url = "http://old.metromatinee.com/malayalam_movie_reviews/images/";
       if($row->MVR_Image == ''){
       $row_data->mvr_image = '';
       }else{

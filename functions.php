@@ -289,15 +289,22 @@ function getArtistClipsByArtistID($page,$itemsPerPage) {
           $row_data->field_released = $row->FILM_Released;
         }
         $img_url = "http://old.metromatinee.com/movies/images/m$row_data->field_film_id_/large/";
+
         $film_profile_image = getFilmProfileImage($row_data->field_film_id_);
         if(isset($film_profile_image[0]) && $film_profile_image[0]->PFL_Images !=''){
         $row_data->field_profile_image = $img_url.$film_profile_image[0]->PFL_Images;
         }else{
         $row_data->field_profile_image = '';
        }
-       $filmstage = getFilmStage($row_data->field_film_id_);
+       $filmstage = getFilmStage($row_data->field_film_id_);      
        $row_data->field_stage = $filmstage;
 
+       $film_category = get_film_category($row_data->field_film_id_);
+       foreach ($film_category as $key => $value) {
+          
+          $row_data->field_category = $value;
+       }      
+     
       $film_details = getFilmDetails($row_data->field_film_id_);
 
       $row_data->FLDS_Starring_Two = add_artist_id($film_details[0]->FLDS_Starring_Two);
@@ -479,11 +486,13 @@ function getArtistClipsByArtistID($page,$itemsPerPage) {
       $artist_ids = flip_artist_id($row_data->FLDS_Digital_Inte,$artist_ids);
 
       $rows[] = $row_data;
+      //print_r($rows);exit;
   }
 
   $artist_ids = array_keys($artist_ids);
 
-  $url = 'http://www.metromatinee.com/?q=importnid';
+  //$url = 'http://www.metromatinee.com/?q=importnid';
+  $url = 'http://192.168.27.100/metromatinee/?q=importnid';
   $result = service_call($url,$artist_ids);
 //print_r($result);
      $new_rows = array();
@@ -1284,4 +1293,58 @@ if (mysql_num_rows($query) > 0)
 }
 
 return 0;
+}
+
+
+function get_film_category($id) {
+
+  $select = mysql_query("SELECT * FROM bb_film_category_child fc where fc.FILM_Id = $id limit 1;");
+
+  $rows = array();  
+  while($row = mysql_fetch_object($select))
+        {
+          $row_data = new stdClass();
+          $film_category_taxonomy_ids = array('Comedy' => 16,
+                                              'Action' => 14,
+                                              'Family Thriller' => 11,
+                                              'Drama' => 12,                              
+                                              'History' => 203,
+                                              'Thriller' => 13,
+                                              'War' => 205,
+                                              'Romance' => 17,
+                                              'Family Drama' => 206,
+                                              'Suspense' => 15,
+                                              'Crime' => 207,
+                                              'Musical' => 208,
+                                              'Detective' => 209,
+                                              'Mystery' => 204,
+                                              'Sport' => 18,
+                                              'Horror' => 2,
+                                              'Adventure' => 212,
+                                              'Fantasy' => 20,
+                                              'Family' => 210,
+                                              'Social' => 211,
+                                              'Children' => 19,                              
+                                        );
+          $film_category_values = array();          
+          $category_values = film_category_name($row->FLCM_Id);
+          $category = explode(",",$category_values[0]->FLCM_Name);
+          foreach($category as $key => $val) {
+            $film_category_values[] = $film_category_taxonomy_ids[trim($val)];
+          }               
+  }   
+  //return $film_category_values; 
+  return array("results" => $film_category_values);     
+}
+
+function film_category_name($id) {
+
+  $select = mysql_query("SELECT FLCM_Name FROM bb_film_category_master fcm where  fcm.FLCM_Id = $id;");
+
+  $rows = array();
+     while($row = mysql_fetch_object($select))
+       {      
+        $rows[] = $row;
+       }
+    return $rows;
 }

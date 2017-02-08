@@ -491,8 +491,8 @@ function getArtistClipsByArtistID($page,$itemsPerPage) {
 
   $artist_ids = array_keys($artist_ids);
 
-  //$url = 'http://www.metromatinee.com/?q=importnid';
-  $url = 'http://192.168.27.100/metromatinee/?q=importnid';
+  $url = 'http://www.metromatinee.com/?q=importnid';
+  //$url = 'http://192.168.27.100/metromatinee/?q=importnid';
   $result = service_call($url,$artist_ids);
 //print_r($result);
      $new_rows = array();

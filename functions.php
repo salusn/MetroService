@@ -494,7 +494,7 @@ function getArtistClipsByArtistID($page,$itemsPerPage) {
   $url = 'http://admin.metromatinee.com/importnid';
   //$url = 'http://192.168.27.100/metromatinee/?q=importnid';
   $result = service_call($url,$artist_ids);
-//print_r($result);
+  //print_r($result);exit;
      $new_rows = array();
       foreach ($rows as $key => $new_row) {
 
@@ -1348,3 +1348,10 @@ function film_category_name($id) {
        }
     return $rows;
 }
+
+// function get_json_data_artist_nid () {
+//   $str = file_get_contents('nid.json');
+//   $json = json_decode($str, true);
+  
+
+// }

@@ -490,6 +490,8 @@ function getArtistClipsByArtistID($page,$itemsPerPage) {
   }
 
   $artist_ids = array_keys($artist_ids);
+  $nids = get_json_data_artist_nid($artist_ids);
+  print_r($nids);exit;
 
   $url = 'http://admin.metromatinee.com/importnid';
   //$url = 'http://192.168.27.100/metromatinee/?q=importnid';
@@ -1349,9 +1351,17 @@ function film_category_name($id) {
     return $rows;
 }
 
-// function get_json_data_artist_nid () {
-//   $str = file_get_contents('nid.json');
-//   $json = json_decode($str, true);
-  
+function get_json_data_artist_nid($artist_ids) {
 
-// }
+  $str = file_get_contents('nid.json');
+  $json_array = json_decode($str, true);
+  $nids = array();
+
+  foreach($artist_ids as $key => $value) {
+    if( isset($json_array[$key])){
+      $nids[] = $json_array[$key];
+    }
+  }
+
+  return $nids;
+}

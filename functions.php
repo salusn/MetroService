@@ -490,13 +490,8 @@ function getArtistClipsByArtistID($page,$itemsPerPage) {
   }
 
   $artist_ids = array_keys($artist_ids);
-  $nids = get_json_data_artist_nid($artist_ids);
-  print_r($nids);exit;
-
-  $url = 'http://admin.metromatinee.com/importnid';
-  //$url = 'http://192.168.27.100/metromatinee/?q=importnid';
-  $result = service_call($url,$artist_ids);
-  //print_r($result);exit;
+  $result = get_json_data_artist_nid($artist_ids);
+  ksort($result);
      $new_rows = array();
       foreach ($rows as $key => $new_row) {
 
@@ -1358,8 +1353,8 @@ function get_json_data_artist_nid($artist_ids) {
   $nids = array();
 
   foreach($artist_ids as $key => $value) {
-    if( isset($json_array[$key])){
-      $nids[] = $json_array[$key];
+    if( isset($json_array[$value])){
+      $nids[$value] = $json_array[$value];
     }
   }
 

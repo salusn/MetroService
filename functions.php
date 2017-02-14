@@ -104,12 +104,12 @@ require('config.php');
             $artist_ids[$row->ASTM_Id] = $row->ASTM_Id;
           }
     	  }
+         
         $artist_ids = array_keys($artist_ids);
-        $url = 'http://www.metromatinee.com/?q=importnid';
-        $result = service_call($url,$artist_ids);
-//print_r($result);
+        $result = get_json_data_artist_nid($artist_ids);        
+        ksort($result);     
        foreach ($gallery as $key => $value) {               
-         $row_data = new stdClass();
+         $row_data = new stdClass();        
          $row_data->field_artist = $result[$key];
          $row_data->title = "Photo Gallery $page";
          $row_data->field_media_category = "Image";

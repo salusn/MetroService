@@ -144,7 +144,7 @@ function getArtistImage($id, $page, $itemsPerPage) {
 
 	$rows[] = array(
 		'field_artist' => $result[$id],
-		'title' => "Photo Gallery" . $page,
+		'title' => "Photo Gallery",
 		'field_media_category' => "Image",
 		'field_media' => "Artist",
 		'field_media_image' => $img,

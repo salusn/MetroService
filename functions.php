@@ -127,6 +127,7 @@ function getArtistImage($id, $page, $itemsPerPage) {
 	$rows = array();
 	$gallery = array();
 	$artist_ids = array();
+	$img = array();
 
 	while ($row = mysql_fetch_object($select)) {
 
@@ -134,11 +135,11 @@ function getArtistImage($id, $page, $itemsPerPage) {
 
 		$result = get_json_data_artist_nid(array($id));
 		ksort($result);
-		// print_r($result);exit;
+
 		$img_url = "http://old.metromatinee.com/gallery/a$row->ASTM_Id/large/";
-		if ((@fopen($img_url . $row->ATIM_Image, "r") == true)) {
-			$img[] = $img_url . $row->ATIM_Image;
-		}
+		//if ((@fopen($img_url . $row->ATIM_Image, "r") == true)) {
+		$img[] = $img_url . $row->ATIM_Image;
+		//}
 
 	}
 

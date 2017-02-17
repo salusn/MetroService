@@ -1377,6 +1377,7 @@ function artist_image_count() {
 	$rows = array();
 	while ($row = mysql_fetch_object($select)) {
 
+		if($row->count < 178)
 		$rows[$row->count][] = $row->ASTM_Id;
 	}
 	krsort($rows);

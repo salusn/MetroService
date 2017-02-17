@@ -271,12 +271,13 @@ function getArtistClipsByArtistID($page, $itemsPerPage) {
 	}
 
 	$artist_ids = array_keys($artist_ids);
-	$url = 'http://www.metromatinee.com/?q=importnid';
-	$result = service_call($url, $artist_ids);
+	$result = get_json_data_artist_nid($artist_ids);
+	ksort($result);
 
 	$new_rows = array();
 	foreach ($rows as $key => $value) {
 		$value->field_artist = $result[$value->field_artist];
+		//print_r($value->field_artist);exit;
 		$new_rows[] = $value;
 	}
 
@@ -1369,18 +1370,13 @@ function get_json_data_artist_nid($artist_ids) {
 }
 
 function artist_image_count() {
-
 	$str = file_get_contents('nid.json');
 	$json_array = json_decode($str, true);
-
 	$select = mysql_query("SELECT ASTM_Id,count(*) as count from bb_artist_image GROUP BY ASTM_Id;");
 	$rows = array();
 	while ($row = mysql_fetch_object($select)) {
-
-		if($row->count < 178)
 		$rows[$row->count][] = $row->ASTM_Id;
 	}
 	krsort($rows);
-	//print_r($rows); exit;
 	return $rows;
 }

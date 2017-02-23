@@ -654,7 +654,7 @@ function getFilmImages($id, $page, $itemsPerPage) {
 		//if ((@fopen($img_url . $row->FLM_Image, "r") == true)) {
 		$img[] = $img_url . $row->FLM_Image;
 		//}
-		$add_date = $row->FILM_Add_Date;
+		$add_date = strtotime($row->FILM_Add_Date);
 
 	}
 	$rows[] = array(
@@ -663,7 +663,7 @@ function getFilmImages($id, $page, $itemsPerPage) {
 		'field_media_category' => "Image",
 		'field_media' => "Films",
 		'field_media_image' => $img,
-		'date' => $add_date,
+		'created' => $add_date,
 		'field_latest' => "No",
 	);
 	return array("results" => $rows);

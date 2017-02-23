@@ -630,16 +630,66 @@ function getFilmProfileImage($id) {
 	}
 	return $profile_images;
 }
+//cut
+// function getArtistImage($id, $page, $itemsPerPage) {
+// 	$offset = ($page - 1) * $itemsPerPage;
+// 	$limit_set = '';
+// 	if ($itemsPerPage > 0) {
+// 		$limit_set = "limit $offset,$itemsPerPage";
+// 	}
+// 	$select = mysql_query("SELECT ASTM_Id,ATIM_Image,ATIM_Add_Date FROM bb_artist_image i where i.ASTM_Id = $id $limit_set;");
+
+// 	$rows = array();
+// 	$gallery = array();
+// 	$artist_ids = array();
+// 	$img = array();
+
+// 	while ($row = mysql_fetch_object($select)) {
+
+// 		$row_data = new stdClass();
+
+// 		$result = get_json_data_artist_nid(array($id));
+// 		ksort($result);
+
+// 		$img_url = "http://old.metromatinee.com/gallery/a$row->ASTM_Id/large/";
+// 		//if ((@fopen($img_url . $row->ATIM_Image, "r") == true)) {
+// 		$img[] = $img_url . $row->ATIM_Image;
+// 		//}
+
+// 	}
+
+// 	$rows[] = array(
+// 		'field_artist' => $result[$id],
+// 		'title' => "Photo Gallery",
+// 		'field_media_category' => "Image",
+// 		'field_media' => "Artist",
+// 		'field_media_image' => $img,
+// 		'date' => strtotime($row->ATIM_Add_Date),
+// 		'field_latest' => "No",
+// 	);
+
+// 	return array("results" => $rows);
+// }
 
 //film galery images
-function getFilmImages($page, $itemsPerPage) {
+function getFilmImages($id, $page, $itemsPerPage) {
 	$offset = ($page - 1) * $itemsPerPage;
-	$select = mysql_query("SELECT FILM_Id,FLM_Image FROM bb_film_image fi limit $offset,$itemsPerPage ;");
+	$limit_set = '';
+	if ($itemsPerPage > 0) {
+		$limit_set = "limit $offset,$itemsPerPage";
+	}
+	$select = mysql_query("SELECT FILM_Id,FLM_Image,FILM_Add_Date FROM bb_film_image fi where fi.FILM_Id = $id
+		$limit_set ;");
 	$film_images = array();
 	$gallery = array();
 	$film_ids = array();
 
 	while ($row = mysql_fetch_object($select)) {
+		$img = array();
+		$row_data = new stdClass();
+		$result = get_json_data_film_nid(array($id));
+		ksort($result);
+
 		$img_url = "http://old.metromatinee.com/movies/images/m$row->FILM_Id/large/";
 		// if($row->FLM_Image == ''){
 		//   $row_data->field_media_image == '';
@@ -647,27 +697,33 @@ function getFilmImages($page, $itemsPerPage) {
 		// $field_media_filmimage[] = $img_url.$row->FLM_Image;
 		// }
 		if ((@fopen($img_url . $row->FLM_Image, "r") == true)) {
-			$gallery[$row->FILM_Id][] = $img_url . $row->FLM_Image;
-			$film_ids[$row->FILM_Id] = $row->FILM_Id;
+			//$gallery[$row->FILM_Id][] = $img_url . $row->FLM_Image;
+			//$film_ids[$row->FILM_Id] = $row->FILM_Id;
+			$img[] = $img_url . $row->FLM_Image;
 		}
+		//$add_date = $row->FILM_Add_Date;
 
+		$rows[] = array(
+			'field_film' => $result[$id],
+			'title' => "Photo Gallery Films",
+			'field_media_category' => "Image",
+			'field_media' => "Films",
+			'field_media_image' => $img,
+			'date' => $row->FILM_Add_Date,
+			'field_latest' => "No",
+		);
 	}
+	// foreach ($gallery as $key => $value) {
+	// 	$row_data = new stdClass();
+	// 	$row_data->field_film = $result[$key];
+	// 	$row_data->title = "Photo Gallery Films $page";
+	// 	$row_data->field_media_category = "Image";
+	// 	$row_data->field_media = "Films";
+	// 	$row_data->field_latest = "No";
+	// 	$row_data->field_media_image = $value;
+	// 	$rows[] = $row_data;
 
-	$film_ids = array_keys($film_ids);
-	$url = 'http://www.metromatinee.com/?q=importfilmid';
-	$result = service_call($url, $film_ids);
-//print_r($result);
-	foreach ($gallery as $key => $value) {
-		$row_data = new stdClass();
-		$row_data->field_film = $result[$key];
-		$row_data->title = "Photo Gallery Films $page";
-		$row_data->field_media_category = "Image";
-		$row_data->field_media = "Films";
-		$row_data->field_latest = "No";
-		$row_data->field_media_image = $value;
-		$rows[] = $row_data;
-
-	}
+	// }
 
 	return array("results" => $rows);
 }
@@ -1378,5 +1434,33 @@ function artist_image_count() {
 		$rows[$row->count][] = $row->ASTM_Id;
 	}
 	krsort($rows);
+	return $rows;
+}
+
+function get_json_data_film_nid($film_ids) {
+
+	$str = file_get_contents('filmnid.json');
+	$json_array = json_decode($str, true);
+	$nids = array();
+
+	foreach ($film_ids as $key => $value) {
+		if (isset($json_array[$value])) {
+			$nids[$value] = $json_array[$value];
+		}
+	}
+	return $nids;
+}
+
+function film_image_count() {
+	$str = file_get_contents('filmnid.json');
+	$json_array = json_decode($str, true);
+	$select = mysql_query("SELECT FILM_Id,count(*) as count from bb_film_image GROUP BY FILM_Id;");
+	$rows = array();
+	while ($row = mysql_fetch_object($select)) {
+		$rows[$row->count][] = $row->FILM_Id;
+	}
+
+	krsort($rows);
+	//print_r($rows);
 	return $rows;
 }

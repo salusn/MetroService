@@ -645,7 +645,7 @@ function getFilmImages($id, $page, $itemsPerPage) {
 	$film_ids = array();
 
 	while ($row = mysql_fetch_object($select)) {
-		$img = array();
+
 		$row_data = new stdClass();
 		$result = get_json_data_film_nid(array($id));
 		ksort($result);
@@ -654,17 +654,18 @@ function getFilmImages($id, $page, $itemsPerPage) {
 		//if ((@fopen($img_url . $row->FLM_Image, "r") == true)) {
 		$img[] = $img_url . $row->FLM_Image;
 		//}
-		$rows[] = array(
-			'field_film' => $result[$id],
-			'title' => "Photo Gallery Films",
-			'field_media_category' => "Image",
-			'field_media' => "Films",
-			'field_media_image' => $img,
-			'date' => $row->FILM_Add_Date,
-			'field_latest' => "No",
-		);
-	}
+		$add_date = $row->FILM_Add_Date;
 
+	}
+	$rows[] = array(
+		'field_film' => $result[$id],
+		'title' => "Photo Gallery Films",
+		'field_media_category' => "Image",
+		'field_media' => "Films",
+		'field_media_image' => $img,
+		'date' => $add_date,
+		'field_latest' => "No",
+	);
 	return array("results" => $rows);
 }
 

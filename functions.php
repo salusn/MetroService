@@ -630,46 +630,6 @@ function getFilmProfileImage($id) {
 	}
 	return $profile_images;
 }
-//cut
-// function getArtistImage($id, $page, $itemsPerPage) {
-// 	$offset = ($page - 1) * $itemsPerPage;
-// 	$limit_set = '';
-// 	if ($itemsPerPage > 0) {
-// 		$limit_set = "limit $offset,$itemsPerPage";
-// 	}
-// 	$select = mysql_query("SELECT ASTM_Id,ATIM_Image,ATIM_Add_Date FROM bb_artist_image i where i.ASTM_Id = $id $limit_set;");
-
-// 	$rows = array();
-// 	$gallery = array();
-// 	$artist_ids = array();
-// 	$img = array();
-
-// 	while ($row = mysql_fetch_object($select)) {
-
-// 		$row_data = new stdClass();
-
-// 		$result = get_json_data_artist_nid(array($id));
-// 		ksort($result);
-
-// 		$img_url = "http://old.metromatinee.com/gallery/a$row->ASTM_Id/large/";
-// 		//if ((@fopen($img_url . $row->ATIM_Image, "r") == true)) {
-// 		$img[] = $img_url . $row->ATIM_Image;
-// 		//}
-
-// 	}
-
-// 	$rows[] = array(
-// 		'field_artist' => $result[$id],
-// 		'title' => "Photo Gallery",
-// 		'field_media_category' => "Image",
-// 		'field_media' => "Artist",
-// 		'field_media_image' => $img,
-// 		'date' => strtotime($row->ATIM_Add_Date),
-// 		'field_latest' => "No",
-// 	);
-
-// 	return array("results" => $rows);
-// }
 
 //film galery images
 function getFilmImages($id, $page, $itemsPerPage) {
@@ -691,18 +651,9 @@ function getFilmImages($id, $page, $itemsPerPage) {
 		ksort($result);
 
 		$img_url = "http://old.metromatinee.com/movies/images/m$row->FILM_Id/large/";
-		// if($row->FLM_Image == ''){
-		//   $row_data->field_media_image == '';
-		// }else{
-		// $field_media_filmimage[] = $img_url.$row->FLM_Image;
-		// }
-		if ((@fopen($img_url . $row->FLM_Image, "r") == true)) {
-			//$gallery[$row->FILM_Id][] = $img_url . $row->FLM_Image;
-			//$film_ids[$row->FILM_Id] = $row->FILM_Id;
-			$img[] = $img_url . $row->FLM_Image;
-		}
-		//$add_date = $row->FILM_Add_Date;
-
+		//if ((@fopen($img_url . $row->FLM_Image, "r") == true)) {
+		$img[] = $img_url . $row->FLM_Image;
+		//}
 		$rows[] = array(
 			'field_film' => $result[$id],
 			'title' => "Photo Gallery Films",
@@ -713,17 +664,6 @@ function getFilmImages($id, $page, $itemsPerPage) {
 			'field_latest' => "No",
 		);
 	}
-	// foreach ($gallery as $key => $value) {
-	// 	$row_data = new stdClass();
-	// 	$row_data->field_film = $result[$key];
-	// 	$row_data->title = "Photo Gallery Films $page";
-	// 	$row_data->field_media_category = "Image";
-	// 	$row_data->field_media = "Films";
-	// 	$row_data->field_latest = "No";
-	// 	$row_data->field_media_image = $value;
-	// 	$rows[] = $row_data;
-
-	// }
 
 	return array("results" => $rows);
 }

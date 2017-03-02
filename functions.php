@@ -654,7 +654,9 @@ function getFilmImages($id, $page, $itemsPerPage) {
 		//if ((@fopen($img_url . $row->FLM_Image, "r") == true)) {
 		$img[] = $img_url . $row->FLM_Image;
 		//}
-		$add_date = strtotime($row->FILM_Add_Date);
+		if ($row->FILM_Add_Date != '') {
+			$add_date = strtotime($row->FILM_Add_Date);
+		}
 
 	}
 	$rows[] = array(

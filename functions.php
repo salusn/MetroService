@@ -671,22 +671,70 @@ function getFilmImages($id, $page, $itemsPerPage) {
 	return array("results" => $rows);
 }
 
-//film trailers
-function getFilmTrailers($cat, $page, $itemsPerPage) {
-	//print_r("hello");
+//film trailers old
+// function getFilmTrailers($cat, $page, $itemsPerPage) {
+// 	//print_r("hello");
+// 	$offset = ($page - 1) * $itemsPerPage;
+// 	$select = mysql_query("SELECT FLMT_Id,FILM_Id,FLMT_UTube_Path,FLMT_Image,FLMT_Type,FLMT_Title,FLMT_Descr FROM bb_film_trailers ft limit $offset,$itemsPerPage ;");
+// 	$film_trailers = array();
+// 	$gallery = array();
+// 	$film_ids = array();
+
+// 	while ($row = mysql_fetch_object($select)) {
+// 		$row_data = new stdClass();
+// 		if ($row->FLMT_Type == 'TrailersPromos') {
+// 			$field_media_type = 4;
+// 		}
+// 		$row_data->title = $row->FLMT_Title;
+// 		$row_data->field_film = $row->FILM_Id;
+// 		$row_data->field_media_category = "Video";
+// 		$row_data->field_media = "Films";
+// 		$row_data->field_latest = "No";
+// 		//  $row_data->field_biography = preg_replace('/[^a-zA-Z0-9_ %\[\]\.\(\)%&-]/s', '',$row->ASTM_Biography);
+// 		//  $row_data->field_video_youtube_path = preg_match("(?<=v=)[a-zA-Z0-9-]+(?=&)|(?<=[0-9]/)[^&\n]+|(?<=v=)[^&\n]+", $row->FLMT_UTube_Path, $matches);
+// 		//$row_data->field_video_youtube_path = $row->FLMT_UTube_Path;
+// 		$row_data->field_media_type = $field_media_type;
+// 		$row_data->field_video_youtube_path = get_youtube_url($row->FLMT_UTube_Path);
+// 		//print_r($row_data->field_video_youtube_path);
+// 		$row_data->field_media_description = $row->FLMT_Descr;
+// 		$film_ids[$row->FILM_Id] = $row->FILM_Id;
+// 		$rows[] = $row_data;
+// 	}
+
+// 	$film_ids = array_keys($film_ids);
+// 	$url = 'http://www.metromatinee.com/?q=importfilmid';
+// 	$result = service_call($url, $film_ids);
+// //print_r($result);
+// 	foreach ($rows as $key => $value) {
+// 		$value->field_film = $result[$value->field_film];
+// 	}
+// 	return array("results" => $rows);
+// }
+
+//Film trailers new
+function getFilmTrailers($cat, $id, $page, $itemsPerPage) {
 	$offset = ($page - 1) * $itemsPerPage;
-	$select = mysql_query("SELECT FLMT_Id,FILM_Id,FLMT_UTube_Path,FLMT_Image,FLMT_Type,FLMT_Title,FLMT_Descr FROM bb_film_trailers ft limit $offset,$itemsPerPage ;");
+	$limit_set = '';
+	if ($itemsPerPage > 0) {
+		$limit_set = "limit $offset,$itemsPerPage";
+	}
+	$select = mysql_query("SELECT FLMT_Id,FILM_Id,FLMT_UTube_Path,FLMT_Image,FLMT_Type,FLMT_Title,FLMT_Descr FROM bb_film_trailers ft where ft.FILM_Id = $id $limit_set ;");
 	$film_trailers = array();
 	$gallery = array();
 	$film_ids = array();
 
 	while ($row = mysql_fetch_object($select)) {
+
 		$row_data = new stdClass();
+		$result = get_json_data_film_nid(array($id));
+		ksort($result);
+
 		if ($row->FLMT_Type == 'TrailersPromos') {
 			$field_media_type = 4;
 		}
+
 		$row_data->title = $row->FLMT_Title;
-		$row_data->field_film = $row->FILM_Id;
+		$row_data->field_film = $result[$id];
 		$row_data->field_media_category = "Video";
 		$row_data->field_media = "Films";
 		$row_data->field_latest = "No";
@@ -701,13 +749,6 @@ function getFilmTrailers($cat, $page, $itemsPerPage) {
 		$rows[] = $row_data;
 	}
 
-	$film_ids = array_keys($film_ids);
-	$url = 'http://www.metromatinee.com/?q=importfilmid';
-	$result = service_call($url, $film_ids);
-//print_r($result);
-	foreach ($rows as $key => $value) {
-		$value->field_film = $result[$value->field_film];
-	}
 	return array("results" => $rows);
 }
 
@@ -1398,6 +1439,20 @@ function film_image_count() {
 	$str = file_get_contents('filmnid.json');
 	$json_array = json_decode($str, true);
 	$select = mysql_query("SELECT FILM_Id,count(*) as count from bb_film_image GROUP BY FILM_Id;");
+	$rows = array();
+	while ($row = mysql_fetch_object($select)) {
+		$rows[$row->count][] = $row->FILM_Id;
+	}
+
+	krsort($rows);
+	//print_r($rows);
+	return $rows;
+}
+
+function film_trailer_count() {
+	$str = file_get_contents('filmnid.json');
+	$json_array = json_decode($str, true);
+	$select = mysql_query("SELECT FILM_Id,count(*) as count from bb_film_trailers GROUP BY FILM_Id;");
 	$rows = array();
 	while ($row = mysql_fetch_object($select)) {
 		$rows[$row->count][] = $row->FILM_Id;

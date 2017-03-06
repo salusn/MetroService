@@ -192,7 +192,7 @@ function getArtistClipsByFilmID($id, $page, $itemsPerPage) {
 			$field_media_type = 3514;
 		}
 		if ($row->ATCLIP_Type == 'Full Length Movie') {
-			$field_media_type = 90;
+			$field_media_type = 3515;
 		}
 		if ($row->ATCLIP_Type == 'TrailersPromos') {
 			$field_media_type = 4;

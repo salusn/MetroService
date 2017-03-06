@@ -823,16 +823,26 @@ function get_youtube_url($url) {
 
 //film clips with special category
 
-function getFilmClips($cat, $page, $itemsPerPage) {
+function getFilmClips($cat, $id, $page, $itemsPerPage) {
+
 	$offset = ($page - 1) * $itemsPerPage;
-	$select = mysql_query("SELECT FLMCP_Id,FLMCP_UTube_Path,FLMCP_Image,FLMCP_Descr,FLMCP_Title,FLMCP_Type FROM bb_film_clips fc WHERE FLMCP_Type
-    IN ('Interviews','Short Film', 'General', 'News') limit $offset,$itemsPerPage;");
+	$limit_set = '';
+	if ($itemsPerPage > 0) {
+		$limit_set = "limit $offset,$itemsPerPage";
+	}
+
+	$offset = ($page - 1) * $itemsPerPage;
+	$select = mysql_query("SELECT FILM_Id,FLMCP_UTube_Path,FLMCP_Image,FLMCP_Descr,FLMCP_Title,FLMCP_Type FROM bb_film_clips fc WHERE FILM_Id =$id AND FLMCP_Type
+    IN ('Interviews','Short Film', 'General', 'News') $limit_set;");
 	$film_clips = array();
 	$gallery = array();
 	//$film_ids = array();
 
 	while ($row = mysql_fetch_object($select)) {
+
 		$row_data = new stdClass();
+		$result = get_json_data_film_nid(array($id));
+		ksort($result);
 
 		if ($row->FLMCP_Type == 'Interviews') {
 			$field_media_type = 86;
@@ -847,29 +857,19 @@ function getFilmClips($cat, $page, $itemsPerPage) {
 			$field_media_type = 88;
 		}
 
-		$row_data->field_film = 0;
+		//$row_data->field_film = 0;
+		$row_data->field_film = $result[$id];
 		$row_data->title = $row->FLMCP_Title;
 		$row_data->field_media_category = "Video";
 		$row_data->field_media = "Films";
 		$row_data->field_latest = "No";
 		$row_data->field_video_youtube_path = get_youtube_url($row->FLMCP_UTube_Path);
-		//$row_data->field_video_youtube_path = $row->FLMCP_UTube_Path;
 		$row_data->field_media_type = $field_media_type;
 		$row_data->field_media_description = $row->FLMCP_Descr;
-		//$film_ids[$row->FILM_Id] = $row->FILM_Id;
 
 		$rows[] = $row_data;
 
 	}
-	// $film_ids = array_keys($film_ids);
-	// $url = 'http://192.168.27.100/metromatinee/?q=importfilmid';
-	// $result = service_call($url,$film_ids);
-	//print_r($result);
-	// $new_rows = array();
-	// foreach ($rows as $key => $value) {
-	//   $value->field_film = $result[$value->field_film];
-	//   $new_rows[] = $value;
-	// }
 
 	return array("results" => $rows);
 }
@@ -1453,6 +1453,23 @@ function film_trailer_count() {
 	$str = file_get_contents('filmnid.json');
 	$json_array = json_decode($str, true);
 	$select = mysql_query("SELECT FILM_Id,count(*) as count from bb_film_trailers GROUP BY FILM_Id;");
+	$rows = array();
+	while ($row = mysql_fetch_object($select)) {
+		$rows[$row->count][] = $row->FILM_Id;
+	}
+
+	krsort($rows);
+	//print_r($rows);
+	return $rows;
+}
+
+function film_clips_count() {
+	$str = file_get_contents('filmnid.json');
+	$json_array = json_decode($str, true);
+
+	$select = mysql_query("SELECT FILM_Id,count(*) as count  FROM bb_film_clips fc WHERE FILM_Id !=0 AND FLMCP_Type
+	   IN ('Interviews','Short Film', 'General', 'News') GROUP BY FILM_Id;");
+
 	$rows = array();
 	while ($row = mysql_fetch_object($select)) {
 		$rows[$row->count][] = $row->FILM_Id;

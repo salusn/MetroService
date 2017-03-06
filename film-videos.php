@@ -12,7 +12,7 @@ if ($cat == "trailers") {
 }
 
 if ($cat == "clips") {
-	$data = getFilmClips($cat, $page, $itemsPerPage);
+	$data = getFilmClips($cat, $id, $page, $itemsPerPage);
 }
 echo json_encode($data);
 // echo "<pre>";

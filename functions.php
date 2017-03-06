@@ -866,6 +866,7 @@ function getFilmClips($cat, $id, $page, $itemsPerPage) {
 		$row_data->field_video_youtube_path = get_youtube_url($row->FLMCP_UTube_Path);
 		$row_data->field_media_type = $field_media_type;
 		$row_data->field_media_description = $row->FLMCP_Descr;
+		$row_data->created = 1457241777;
 
 		$rows[] = $row_data;
 

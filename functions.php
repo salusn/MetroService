@@ -157,15 +157,30 @@ function getArtistImage($id, $page, $itemsPerPage) {
 }
 
 //artist video clips by film id
-function getArtistClipsByFilmID($page, $itemsPerPage) {
+function getArtistClipsByFilmID($id, $page, $itemsPerPage) {
+
 	$offset = ($page - 1) * $itemsPerPage;
-	$select = mysql_query("SELECT FILM_Id,ATCLIP_UTube_Path,ATCLIP_Image,ATCLIP_Type,ATCLIP_Descr,ATCLIP_Title from  bb_artist_clips c where FILM_Id > 0 order by FILM_Id limit $offset,$itemsPerPage ;");
+	$limit_set = '';
+	if ($itemsPerPage > 0) {
+		$limit_set = "limit $offset,$itemsPerPage";
+	}
+	$select = mysql_query("SELECT FILM_Id,	ASTM_Id,ATCLIP_UTube_Path,ATCLIP_Image,ATCLIP_Type,ATCLIP_Descr,ATCLIP_Title from  bb_artist_clips c where FILM_Id = $id order by FILM_Id $limit_set ;");
 	$rows = array();
 	$gallery = array();
-	$film_ids = array();
+	//$film_ids = array();
+	$artist_ids = array();
 
 	while ($row = mysql_fetch_object($select)) {
+		//print_r(array($row->ASTM_Id));
+
 		$row_data = new stdClass();
+		$result = get_json_data_film_nid(array($id));
+		ksort($result);
+
+		$artist_ids[$row->ASTM_Id] = $row->ASTM_Id;
+		$artist_result = get_json_data_artist_nid($artist_ids);
+		ksort($artist_result);
+		//print_r($artist_result[$row->ASTM_Id]);
 
 		if ($row->ATCLIP_Type == 'Interviews') {
 			$field_media_type = 86;
@@ -193,7 +208,8 @@ function getArtistClipsByFilmID($page, $itemsPerPage) {
 		}
 
 		$row_data->title = $row->ATCLIP_Title;
-		$row_data->field_film = $row->FILM_Id;
+		$row_data->field_film = $result[$id];
+		$row_data->field_artist = $artist_result[$row->ASTM_Id];
 		$row_data->field_media_category = "Video";
 		$row_data->field_media = "Artist";
 		$row_data->field_latest = "No";
@@ -201,23 +217,10 @@ function getArtistClipsByFilmID($page, $itemsPerPage) {
 		$row_data->field_media_description = $row->ATCLIP_Descr;
 		$row_data->field_video_youtube_path = get_youtube_url($row->ATCLIP_UTube_Path);
 		//$row_data->field_video_youtube_path = $row->ATCLIP_UTube_Path;
-
-		$film_ids[$row->FILM_Id] = $row->FILM_Id;
 		$rows[] = $row_data;
 	}
 
-	$film_ids = array_keys($film_ids);
-	$url = 'http://www.metromatinee.com/?q=importfilmid';
-	$result = service_call($url, $film_ids);
-	//print_r($result);
-
-	$new_rows = array();
-	foreach ($rows as $key => $value) {
-		$value->field_film = $result[$value->field_film];
-		$new_rows[] = $value;
-	}
-
-	return array("results" => $new_rows);
+	return array("results" => $rows);
 }
 
 //artist film clips by artist id
@@ -1478,5 +1481,27 @@ function film_clips_count() {
 
 	krsort($rows);
 	//print_r($rows);
+	return $rows;
+}
+
+function artist_clips_count() {
+	//print_r("kjk");
+	$str = file_get_contents('filmnid.json');
+	$json_array = json_decode($str, true);
+
+	$select = mysql_query("SELECT  `FILM_Id`, COUNT(  `FILM_Id` ) AS cnt FROM bb_artist_clips
+              GROUP BY  `FILM_Id`
+HAVING  `FILM_Id` !=0;");
+
+	$rows = array();
+	while ($row = mysql_fetch_object($select)) {
+
+		//$val += $row->cnt;
+
+		$rows[$row->cnt][] = $row->FILM_Id;
+	}
+
+	krsort($rows);
+
 	return $rows;
 }

@@ -189,7 +189,7 @@ function getArtistClipsByFilmID($id, $page, $itemsPerPage) {
 			$field_media_type = 87;
 		}
 		if ($row->ATCLIP_Type == 'Scene') {
-			$field_media_type = 5;
+			$field_media_type = 3514;
 		}
 		if ($row->ATCLIP_Type == 'Full Length Movie') {
 			$field_media_type = 90;

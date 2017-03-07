@@ -226,14 +226,12 @@ function getArtistClipsByFilmID($id, $page, $itemsPerPage) {
 //artist film clips by artist id
 function getArtistClipsByArtistID($id, $page, $itemsPerPage) {
 
-	//print_r($id);
-
 	$offset = ($page - 1) * $itemsPerPage;
 	$limit_set = '';
 	if ($itemsPerPage > 0) {
 		$limit_set = "limit $offset,$itemsPerPage";
 	}
-	$select = mysql_query("SELECT ASTM_Id,ATCLIP_UTube_Path,ATCLIP_Image,ATCLIP_Type,ATCLIP_Descr,ATCLIP_Title from  bb_artist_clips c where FILM_Id = 0 order by FILM_Id limit_set;");
+	$select = mysql_query("SELECT ASTM_Id,ATCLIP_UTube_Path,ATCLIP_Image,ATCLIP_Type,ATCLIP_Descr,ATCLIP_Title from  bb_artist_clips c where FILM_Id = 0 and ASTM_Id = $id order by FILM_Id $limit_set;");
 
 	$rows = array();
 
@@ -276,12 +274,10 @@ function getArtistClipsByArtistID($id, $page, $itemsPerPage) {
 		$row_data->field_media_type = $field_media_type;
 		$row_data->field_media_description = $row->ATCLIP_Descr;
 		$row_data->field_video_youtube_path = get_youtube_url($row->ATCLIP_UTube_Path);
-		//$row_data->field_video_youtube_path = $row->ATCLIP_UTube_Path;
 		$row_data->created = 1457241777;
 		$rows[] = $row_data;
 
 	}
-	//print_r($rows);
 
 	return array("results" => $rows);
 }

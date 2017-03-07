@@ -166,8 +166,7 @@ function getArtistClipsByFilmID($id, $page, $itemsPerPage) {
 	}
 	$select = mysql_query("SELECT FILM_Id,	ASTM_Id,ATCLIP_UTube_Path,ATCLIP_Image,ATCLIP_Type,ATCLIP_Descr,ATCLIP_Title from  bb_artist_clips c where FILM_Id = $id order by FILM_Id $limit_set ;");
 	$rows = array();
-	$gallery = array();
-	//$film_ids = array();
+
 	$artist_ids = array();
 
 	while ($row = mysql_fetch_object($select)) {
@@ -216,6 +215,7 @@ function getArtistClipsByFilmID($id, $page, $itemsPerPage) {
 		$row_data->field_media_type = $field_media_type;
 		$row_data->field_media_description = $row->ATCLIP_Descr;
 		$row_data->field_video_youtube_path = get_youtube_url($row->ATCLIP_UTube_Path);
+
 		//$row_data->field_video_youtube_path = $row->ATCLIP_UTube_Path;
 		$rows[] = $row_data;
 	}
@@ -224,15 +224,24 @@ function getArtistClipsByFilmID($id, $page, $itemsPerPage) {
 }
 
 //artist film clips by artist id
-function getArtistClipsByArtistID($page, $itemsPerPage) {
+function getArtistClipsByArtistID($id, $page, $itemsPerPage) {
+
+	//print_r($id);
+
 	$offset = ($page - 1) * $itemsPerPage;
-	$select = mysql_query("SELECT ASTM_Id,ATCLIP_UTube_Path,ATCLIP_Image,ATCLIP_Type,ATCLIP_Descr,ATCLIP_Title from  bb_artist_clips c where FILM_Id = 0 order by FILM_Id limit $offset,$itemsPerPage ;");
+	$limit_set = '';
+	if ($itemsPerPage > 0) {
+		$limit_set = "limit $offset,$itemsPerPage";
+	}
+	$select = mysql_query("SELECT ASTM_Id,ATCLIP_UTube_Path,ATCLIP_Image,ATCLIP_Type,ATCLIP_Descr,ATCLIP_Title from  bb_artist_clips c where FILM_Id = 0 order by FILM_Id limit_set;");
+
 	$rows = array();
-	$gallery = array();
-	$artist_ids = array();
 
 	while ($row = mysql_fetch_object($select)) {
+
 		$row_data = new stdClass();
+		$result = get_json_data_artist_nid(array($id));
+		ksort($result);
 
 		if ($row->ATCLIP_Type == 'Interviews') {
 			$field_media_type = 86;
@@ -241,10 +250,10 @@ function getArtistClipsByArtistID($page, $itemsPerPage) {
 			$field_media_type = 87;
 		}
 		if ($row->ATCLIP_Type == 'Scene') {
-			$field_media_type = 5;
+			$field_media_type = 3514;
 		}
 		if ($row->ATCLIP_Type == 'Full Length Movie') {
-			$field_media_type = 90;
+			$field_media_type = 3515;
 		}
 		if ($row->ATCLIP_Type == 'TrailersPromos') {
 			$field_media_type = 4;
@@ -260,7 +269,7 @@ function getArtistClipsByArtistID($page, $itemsPerPage) {
 		}
 
 		$row_data->title = $row->ATCLIP_Title;
-		$row_data->field_artist = $row->ASTM_Id;
+		$row_data->field_artist = $result[$id];
 		$row_data->field_media_category = "Video";
 		$row_data->field_media = "Artist";
 		$row_data->field_latest = "No";
@@ -268,23 +277,13 @@ function getArtistClipsByArtistID($page, $itemsPerPage) {
 		$row_data->field_media_description = $row->ATCLIP_Descr;
 		$row_data->field_video_youtube_path = get_youtube_url($row->ATCLIP_UTube_Path);
 		//$row_data->field_video_youtube_path = $row->ATCLIP_UTube_Path;
-
-		$artist_ids[$row->ASTM_Id] = $row->ASTM_Id;
+		$row_data->created = 1457241777;
 		$rows[] = $row_data;
+
 	}
+	//print_r($rows);
 
-	$artist_ids = array_keys($artist_ids);
-	$result = get_json_data_artist_nid($artist_ids);
-	ksort($result);
-
-	$new_rows = array();
-	foreach ($rows as $key => $value) {
-		$value->field_artist = $result[$value->field_artist];
-		//print_r($value->field_artist);exit;
-		$new_rows[] = $value;
-	}
-
-	return array("results" => $new_rows);
+	return array("results" => $rows);
 }
 
 //film main details
@@ -1504,4 +1503,28 @@ HAVING  `FILM_Id` !=0;");
 	krsort($rows);
 
 	return $rows;
+}
+
+function clips_byartistid_count() {
+
+	$str = file_get_contents('nid.json');
+	$json_array = json_decode($str, true);
+
+	$select = mysql_query("SELECT  `ASTM_Id` , COUNT(  `ASTM_Id` ) AS cnt
+FROM  `bb_artist_clips`
+WHERE  `FILM_Id` =0
+GROUP BY  `ASTM_Id` ;");
+
+	$rows = array();
+	while ($row = mysql_fetch_object($select)) {
+
+		//$val += $row->cnt;
+
+		$rows[$row->cnt][] = $row->ASTM_Id;
+	}
+
+	krsort($rows);
+
+	return $rows;
+
 }

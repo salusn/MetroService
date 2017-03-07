@@ -265,6 +265,9 @@ function getArtistClipsByArtistID($id, $page, $itemsPerPage) {
 		if ($row->ATCLIP_Type == 'News') {
 			$field_media_type = 88;
 		}
+		if ($row->ATCLIP_Type == 'Commercials') {
+			$field_media_type = 3520;
+		}
 
 		$row_data->title = $row->ATCLIP_Title;
 		$row_data->field_artist = $result[$id];
